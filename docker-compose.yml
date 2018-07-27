@@ -1,0 +1,26 @@
+version: '2'
+services:
+  registry:
+    image: Hspt/registry
+    ports:
+      - "10000:10000"
+  config:
+    image: Hspt/config
+    ports:
+      - "11000:11000"
+  monitor:
+    image: Hspt/monitor
+    ports:
+      - "8000:8000"
+  zipkin:
+    image: Hspt/zipkin
+    ports:
+      - "9000:9000"
+  gateway:
+    image: Hspt/gateway
+    ports:
+      - "9080:9080"
+  user:
+    image: Hspt/user
+    ports:
+      - "8090:8090"
