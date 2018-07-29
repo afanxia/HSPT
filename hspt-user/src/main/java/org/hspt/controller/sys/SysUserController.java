@@ -3,6 +3,7 @@ package org.hspt.controller.sys;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.hspt.entity.request.UpdateUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -62,6 +63,12 @@ public class SysUserController {
     @RequestMapping(value = "/role/{role_id}", method = RequestMethod.POST)
     public BaseResponse<BaseToken> addUserByRole(@PathVariable("role_id") long rolePk, @RequestBody @Validated RegisterUser regUser) throws BaseException {
         return userService.registerRoleUser(regUser, rolePk);
+    }
+
+    @ApiOperation(value = "修改指定角色用户", notes = "修改指定角色用户，系统管理员默认可以访问")
+    @RequestMapping(value = "/role/{role_id}", method = RequestMethod.PATCH)
+    public BaseResponse<BaseToken> updateUserByRole(@PathVariable("role_id") long rolePk, @RequestBody @Validated UpdateUser updateUser) throws BaseException {
+        return userService.updateRoleUser(updateUser, rolePk);
     }
 
     @ApiOperation(value = "获取用户信息", notes = "获取系统用户信息，系统管理员默认可以访问")

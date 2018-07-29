@@ -53,6 +53,17 @@ public interface UserService {
 
 
     /**
+     * 更新指定角色用户
+     *
+     * @param updateUser 用户信息
+     * @param pkRole  角色主键
+     * @return
+     * @throws BaseException
+     */
+    BaseResponse updateRoleUser(UpdateUser updateUser, long pkRole) throws BaseException;
+
+
+    /**
      * 注册组织人员
      *
      * @param regUser 用户信息

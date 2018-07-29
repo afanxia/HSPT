@@ -132,8 +132,7 @@ public class UserServiceImpl extends BaseService implements UserService {
         }
         else {
             menus = getUserMenus(userId);
-            //permissions = getUserResources(userId);
-            permissions = permissionsDAO.findAll();
+            permissions = getPermissions(userId);
         }
         menus = generateMenuTree(menus);
         userInfo.setMenuList(menus);
@@ -215,6 +214,14 @@ public class UserServiceImpl extends BaseService implements UserService {
         BeanUtils.copyProperties(regUser, impUser);
         impUser.setPkGroup(getPkGroup());
         return saveUser(impUser, BaseConstants.GEN_USER_TYPE, pkRole);
+    }
+
+    @Override
+    public BaseResponse updateRoleUser(UpdateUser updateUser, long pkRole) throws BaseException {
+        HsptUser impUser = userDAO.findByUserCodeAndDr(updateUser.getUserCode(), BaseConstants.DATA_STATUS_OK);
+        BeanUtils.copyProperties(updateUser, impUser);
+        userDAO.save(impUser);
+        return updateUser(impUser, BaseConstants.GEN_USER_TYPE, pkRole);
     }
 
     @Override
@@ -523,7 +530,7 @@ public class UserServiceImpl extends BaseService implements UserService {
         HsptUser user = userDAO.findOne(qUser.pkUser.eq(userId).and(qUser.dr.eq(BaseConstants.DATA_STATUS_OK)));
         if (null != user) {
             //锁定账号
-            user.setUserStatus(BaseConstants.DATA_STATUS_DEL);
+            user.setDr(BaseConstants.DATA_STATUS_DEL);
             userDAO.save(user);
 
             //将所有的TOKEN清理掉,所有之前登陆的用户都需要用新密码进行登陆
@@ -697,6 +704,64 @@ public class UserServiceImpl extends BaseService implements UserService {
         //返回信息
 
         return new BaseResponse(StatusCode.ADD_SUCCESS, setBaseTokenByHsptUser(impUser));
+    }
+
+    /**
+     * 更新用户信息
+     *
+     * @param impUser  注册提交内容
+     * @param userType 用户类型
+     * @param pkRole   角色主键
+     * @param
+     * @return
+     */
+    public BaseResponse updateUser(HsptUser impUser, int userType, long pkRole) {
+
+        if (null == userDAO.findByUserCodeAndDr(impUser.getUserCode(), BaseConstants.DATA_STATUS_OK)) {
+            throw new BaseException(StatusCode.USER_NOT_FOUND);
+        }
+
+        if (StringUtils.isNotBlank(impUser.getUserEmail())) {
+            if (null != userDAO.findByUserEmailAndDr(impUser.getUserEmail(), BaseConstants.DATA_STATUS_OK)) {
+                throw new BaseException(StatusCode.EMAIL_ERROR_EXISTS);
+            }
+        }
+
+        if (StringUtils.isNotBlank(impUser.getUserPhone())) {
+            if (null != userDAO.findByUserPhoneAndDr(impUser.getUserPhone(), BaseConstants.DATA_STATUS_OK)) {
+                throw new BaseException(StatusCode.PHONE_ERROR_EXISTS);
+            }
+        }
+
+        HsptRole role = null;
+        if (BaseConstants.SYS_ADMIN_TYPE == userType) {
+            role = roleDAO.findByRoleCodeAndDr(BaseConstants.SYS_ADMIN_NAME, BaseConstants.DATA_STATUS_OK);
+        } else if (BaseConstants.GROUP_ADMIN_TYPE == userType) {
+            role = roleDAO.findByRoleCodeAndDr(BaseConstants.GROUP_ADMIN_NAME, BaseConstants.DATA_STATUS_OK);
+        } else if (BaseConstants.PUB_USER_TYPE == userType) {
+            role = roleDAO.findByRoleCodeAndDr(BaseConstants.PUB_USER_NAME, BaseConstants.DATA_STATUS_OK);
+            //开发注册用户 认证状态为0 如果需要认证则需要身份证等信息
+            impUser.setUserAuth(0);
+            //开发注册的用户默认放入开发组织中
+            impUser.setPkGroup(groupDAO.findByGroupCodeAndDr("pub", BaseConstants.DATA_STATUS_OK).getPkGroup());
+        } else if (BaseConstants.GEN_USER_TYPE == userType) {
+            role = roleDAO.findOne(pkRole);
+        }
+
+        if (null == role) {
+            throw new BaseException(StatusCode.ROLE_NOT_FOUND);
+        }
+
+        try {
+            HsptUser user = userDAO.findByUserCodeAndDr(impUser.getUserCode(), BaseConstants.DATA_STATUS_OK);
+            HsptUserRole userRole = userRoleDAO.findByPkUserAndDr(user.getPkUser(), BaseConstants.DATA_STATUS_OK);
+            userRole.setPkRole(pkRole);
+            userRoleDAO.save(userRole);
+            return new BaseResponse(StatusCode.UPDATE_SUCCESS, setBaseTokenByHsptUser(impUser));
+        }catch (Exception e) {
+            throw new BaseException(StatusCode.UPDATE_ERROR);
+        }
+
     }
 
     /**
@@ -971,5 +1036,22 @@ public class UserServiceImpl extends BaseService implements UserService {
                 //按照菜单内部排序号返回
                 .orderBy(im.orderCode.asc())
                 .fetch();
+    }
+
+    public List<HsptPermissions> getPermissions(long pkUser) throws BaseException {
+        QHsptPermissions qHsptPermissions = QHsptPermissions.hsptPermissions;
+        QHsptUserRole qHsptUserRole = QHsptUserRole.hsptUserRole;
+        QHsptRolePermission qHsptRolePermission = QHsptRolePermission.hsptRolePermission;
+        List<HsptPermissions> permissions = getQueryFactory().select(qHsptPermissions)
+            .from(qHsptPermissions, qHsptRolePermission, qHsptUserRole)
+            .where(qHsptPermissions.dr.eq(BaseConstants.DATA_STATUS_OK)
+                .and(qHsptRolePermission.dr.eq(BaseConstants.DATA_STATUS_OK))
+                .and(qHsptUserRole.dr.eq(BaseConstants.DATA_STATUS_OK))
+                .and(qHsptPermissions.pkPermissions.eq(qHsptRolePermission.pkPermission))
+                .and(qHsptRolePermission.pkRole.eq(qHsptUserRole.pkRole))
+                .and(qHsptUserRole.pkUser.eq(pkUser))
+            )
+            .fetch();
+        return permissions;
     }
 }

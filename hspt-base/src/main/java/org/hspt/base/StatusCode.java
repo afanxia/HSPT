@@ -52,6 +52,7 @@ public enum StatusCode {
     FILE_CHECK_FAIL(525, "文件已存在"),
     FILE_CHECK_SUCCESS(526, "文件不存在"),
 
+    USER_NOT_FOUND(600, "用户不存在"),
     USERNAME_NOT_FOUND(601, "用户不能为空"),
     PASSWORD_NOT_FOUND(602, "密码不能为空"),
     LOGIN_INVALID(603, "登陆信息无效"),
