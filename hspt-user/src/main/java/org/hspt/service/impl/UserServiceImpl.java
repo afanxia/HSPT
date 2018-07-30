@@ -5,6 +5,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.xiaoleilu.hutool.util.StrUtil;
 import org.apache.commons.lang.StringUtils;
+import org.hspt.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -25,10 +26,7 @@ import org.hspt.entity.request.*;
 import org.hspt.entity.response.ResCount;
 import org.hspt.entity.response.ResUser;
 import org.hspt.service.UserService;
-import org.hspt.utils.DateUtils;
-import org.hspt.utils.MD5Util;
-import org.hspt.utils.RandomStrUtils;
-import org.hspt.utils.SensitiveInfoUtils;
+
 import java.util.HashMap;
 
 import java.util.ArrayList;
@@ -124,6 +122,8 @@ public class UserServiceImpl extends BaseService implements UserService {
         userInfo.setRoleCode(role.getRoleCode());
         userInfo.setRoleName(role.getRoleName());
         userInfo.setRoleType(role.getRoleType());
+        Gravatar gravatar = new Gravatar();
+        userInfo.setUserAvatar(gravatar.getUrl(user.getUserEmail()));
 
         if("SYS_ADMIN".equals(role.getRoleCode())) { // admin will have all menus/permissions
             menus = getUserMenus();

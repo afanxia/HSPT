@@ -33,6 +33,9 @@ public class UserInfoDTO implements Serializable {
     @ApiModelProperty("角色类型")
     private long roleType;
 
+    @ApiModelProperty("头像url")
+    private String userAvatar;
+
     @ApiModelProperty("菜单列表")
     private List<UserMenuDTO> menuList;
 
