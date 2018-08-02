@@ -3,6 +3,8 @@ package org.hspt.service.impl;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
+import org.hspt.entity.dto.MenuPermissionsDTO;
+import org.hspt.entity.response.ResRoleMenus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -205,6 +207,61 @@ public class RoleServiceImpl extends BaseService implements RoleService {
                     .fetchOne();
         }
         return new BaseResponse(new ResCount(count));
+    }
+
+    @Override
+    public BaseResponse getRoleInfos() throws BaseException {
+        List<HsptRole> roles = roleDAO.findByDr(BaseConstants.DATA_STATUS_OK);
+        QHsptMenu qHsptMenu = QHsptMenu.hsptMenu;
+        QHsptRoleMenu qHsptRoleMenu = QHsptRoleMenu.hsptRoleMenu;
+        QHsptPermissions qHsptPermissions = QHsptPermissions.hsptPermissions;
+        QHsptMenuPermissions qHsptMenuPermissions = QHsptMenuPermissions.hsptMenuPermissions;
+        QHsptUserRole userRole = QHsptUserRole.hsptUserRole;
+        List<ResRoleMenus> rms = new ArrayList<>();
+
+        for (HsptRole role : roles) {
+            ResRoleMenus rm = new ResRoleMenus();
+            List<MenuPermissionsDTO> mps = new ArrayList<>();
+            List<HsptMenu> menus =  getQueryFactory().
+                                    select(qHsptMenu)
+                                    .from(qHsptMenu, qHsptRoleMenu)
+                                    .where(qHsptRoleMenu.pkRole.eq(role.getPkRole())
+                                            .and(qHsptRoleMenu.pkMenu.eq(qHsptMenu.pkMenu)))
+                                    .fetch();
+            for (HsptMenu menu : menus) {
+                MenuPermissionsDTO mp = new MenuPermissionsDTO();
+                if ( "Y".equals(menu.getIsEnd()) ) {
+                    mp.setMenuCode(menu.getMenuCode());
+                    mp.setMenuName(menu.getMenuName());
+                    mp.setMenuUrl(menu.getMenuUrl());
+                    mp.setMenuType(menu.getMenuType());
+                    mp.setMenuLev(menu.getMenuLev());
+                    mp.setIsEnd(menu.getIsEnd());
+                    mp.setPkMenu(menu.getPkMenu());
+                    mp.setPkFMenu(menu.getPkFMenu());
+                    List<HsptPermissions> permissions = getQueryFactory().
+                                                        select(qHsptPermissions)
+                                                        .from(qHsptPermissions, qHsptMenuPermissions)
+                                                        .where(qHsptMenuPermissions.pkMenu.eq(menu.getPkMenu())
+                                                                .and(qHsptMenuPermissions.pkPermissions.eq(qHsptPermissions.pkPermissions)))
+                                                        .fetch();
+                    mp.setPermissions(permissions);
+                    mps.add(mp);
+                }
+            }
+            //判断角色是否被用户引用
+            long count = getQueryFactory().select(userRole.pkRole.count()).from(userRole).where(
+                    userRole.pkRole.eq(role.getPkRole()).and(userRole.dr.eq(BaseConstants.DATA_STATUS_OK))
+            ).fetchOne();
+            rm.setNumUsers(count);
+            rm.setRoleCode(role.getRoleCode());
+            rm.setRoleName(role.getRoleName());
+            rm.setPkRole(role.getPkRole());
+            rm.setMenuPermissions(mps);
+            rms.add(rm);
+        }
+
+        return new BaseResponse(rms);
     }
 
     @Override

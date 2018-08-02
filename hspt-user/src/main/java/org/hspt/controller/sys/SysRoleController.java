@@ -3,6 +3,7 @@ package org.hspt.controller.sys;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.hspt.entity.response.ResRoleMenus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -70,6 +71,12 @@ public class SysRoleController {
     @RequestMapping(value = "/count", method = RequestMethod.GET)
     public BaseResponse<ResCount> getCount(@QuerydslPredicate(root = HsptRole.class) Predicate predicate) throws BaseException {
         return roleService.getCount(-1, predicate);
+    }
+
+    @ApiOperation(value = "获取用户初始信息", notes = "用户登陆之后第一次获取用户信息，包含菜单和权限")
+    @RequestMapping(value = "/getRoleInfos", method = RequestMethod.GET)
+    public BaseResponse<List<ResRoleMenus>> getUserInfo() throws BaseException {
+        return roleService.getRoleInfos();
     }
 
     @ApiOperation(value = "获取全部角色", notes = "获取全部角色多用于下拉，系统管理员默认可以访问")

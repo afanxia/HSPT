@@ -103,6 +103,14 @@ public interface RoleService {
      */
     BaseResponse getRoleAll(long pkGroup, Predicate predicate) throws BaseException;
 
+
+    /**
+     * 获取全部角色
+     *
+     * @return
+     * @throws BaseException
+     */
+    BaseResponse getRoleInfos() throws BaseException;
     /**
      * 删除角色
      *

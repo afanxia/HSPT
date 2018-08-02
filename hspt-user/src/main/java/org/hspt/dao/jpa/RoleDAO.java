@@ -11,6 +11,8 @@ import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * <b> 角色操作DAO类 </b>
  * <p>
@@ -43,6 +45,9 @@ public interface RoleDAO extends BaseJpaDAO<HsptRole>,QuerydslBinderCustomizer<Q
 
     @Cacheable(key = "#p0+#p1")
     HsptRole findByPkRoleAndDr(long pkRole, int dr);
+
+    @Cacheable(key = "#p0")
+    List<HsptRole> findByDr(int dr);
 
     @Cacheable(key = "#p0+#p1+#p2")
     HsptRole findByRoleCodeAndPkGroupAndDr(String roleCode, long pkGroup, int dr);
