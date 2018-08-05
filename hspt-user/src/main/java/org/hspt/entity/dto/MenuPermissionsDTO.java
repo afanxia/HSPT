@@ -37,7 +37,7 @@ public class MenuPermissionsDTO implements Serializable {
     private Long pkFMenu;
 
     @ApiModelProperty("菜单拥有的权限")
-    private List<HsptPermissions> permissions;
+    private List<PermissionDTO> permissions;
 
     public MenuPermissionsDTO() {
         super();

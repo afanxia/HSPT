@@ -44,6 +44,9 @@ public interface RoleDAO extends BaseJpaDAO<HsptRole>,QuerydslBinderCustomizer<Q
     HsptRole findByRoleCodeAndDr(String roleCode, int dr);
 
     @Cacheable(key = "#p0+#p1")
+    HsptRole findByRoleNameAndDr(String roleName, int dr);
+
+    @Cacheable(key = "#p0+#p1")
     HsptRole findByPkRoleAndDr(long pkRole, int dr);
 
     @Cacheable(key = "#p0")

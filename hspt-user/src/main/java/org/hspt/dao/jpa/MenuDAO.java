@@ -37,6 +37,16 @@ public interface MenuDAO extends BaseJpaDAO<HsptMenu>, QuerydslBinderCustomizer<
     }
 
     /**
+     * 根据菜单删除状态查询菜单信息
+     *
+     * @param dr       删除标识
+     * @return
+     */
+    @Cacheable(key = "#p0")
+    List<HsptMenu> findByDr(int dr);
+
+
+    /**
      * 根据菜单编码查询菜单信息
      *
      * @param menuCode 菜单编码

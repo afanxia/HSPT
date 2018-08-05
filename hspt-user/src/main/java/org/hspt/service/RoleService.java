@@ -41,13 +41,23 @@ public interface RoleService {
 
 
     /**
-     * 角色权限授权
+     * 新增角色权限
      *
      * @param rolePermissionList 角色权限信息
      * @return
      * @throws BaseException
      */
-    BaseResponse setRolePermission(ReqRolePermission rolePermissionList) throws BaseException;
+    BaseResponse createRolePermission(ReqRolePermission rolePermissionList) throws BaseException;
+
+
+    /**
+     * 修改角色权限
+     *
+     * @param rolePermissionList 角色权限信息
+     * @return
+     * @throws BaseException
+     */
+    BaseResponse setRolePermission(long pkRole, ReqRolePermission rolePermissionList) throws BaseException;
 
 
     /**

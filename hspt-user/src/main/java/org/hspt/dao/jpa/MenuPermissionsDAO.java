@@ -17,6 +17,16 @@ import org.hspt.entity.jpa.HsptMenuPermissions;
 public interface MenuPermissionsDAO extends BaseJpaDAO<HsptMenuPermissions> {
 
     /**
+     * 根据权限主键获取菜单权限信息
+     *
+     * @param pkPermissions 权限主键
+     * @param dr            删除标识
+     * @return
+     */
+    @Cacheable(key = "#p0+#p1")
+    HsptMenuPermissions findByPkPermissionsAndDr(long pkPermissions, int dr);
+
+    /**
      * 根据菜单主键、权限主键获取菜单权限信息
      *
      * @param pkMenu        菜单主键

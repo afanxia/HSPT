@@ -27,6 +27,9 @@ public class ResRoleMenus implements Serializable {
     @ApiModelProperty("角色名称")
     private String roleName;
 
+    @ApiModelProperty("角色描述")
+    private String roleInfo;
+
     @ApiModelProperty("该角色用户数")
     private Long numUsers;
 

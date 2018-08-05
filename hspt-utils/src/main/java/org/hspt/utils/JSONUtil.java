@@ -1,5 +1,6 @@
 package org.hspt.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
@@ -59,4 +60,8 @@ public class JSONUtil {
         return sortedJsonArray;
 
     }
+
+    public static <T> List<T> readListValue(String json, Class<T> tClazz){
+		return JSON.parseArray(json, tClazz);
+	}
 }

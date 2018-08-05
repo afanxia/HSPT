@@ -3,6 +3,7 @@ package org.hspt.controller.sys;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.hspt.entity.request.ReqRolePermission;
 import org.hspt.entity.response.ResRoleMenus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -55,6 +56,19 @@ public class SysRoleController {
     @RequestMapping(value = "/{roleId}", method = RequestMethod.PUT)
     public BaseResponse setSysRole(@PathVariable("roleId") long roleId, @RequestBody @Validated ReqRole role) throws BaseException {
         return roleService.setRole(roleId, role);
+    }
+
+
+    @ApiOperation(value = "添加系统角色与权限", notes = "添加系统角色与权限，系统管理员默认可以访问")
+    @RequestMapping(value = "/permissions", method = RequestMethod.POST)
+    public BaseResponse addSysRolePermissions(@RequestBody @Validated ReqRolePermission rolePermissions) throws BaseException {
+        return roleService.createRolePermission(rolePermissions);
+    }
+
+    @ApiOperation(value = "修改系统角色与权限", notes = "修改系统角色与权限，系统管理员默认可以访问")
+    @RequestMapping(value = "/permissions/{roleId}", method = RequestMethod.POST)
+    public BaseResponse setSysRolePermissions(@PathVariable("roleId") long pkRole, @RequestBody @Validated ReqRolePermission rolePermissions) throws BaseException {
+        return roleService.setRolePermission(pkRole, rolePermissions);
     }
 
 

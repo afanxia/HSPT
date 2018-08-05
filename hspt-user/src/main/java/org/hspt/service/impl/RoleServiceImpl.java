@@ -3,7 +3,8 @@ package org.hspt.service.impl;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
-import org.hspt.entity.dto.MenuPermissionsDTO;
+import org.hspt.dao.jpa.*;
+import org.hspt.entity.dto.*;
 import org.hspt.entity.response.ResRoleMenus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.hspt.base.*;
 import org.hspt.common.pub.Pub_AuthUtils;
-import org.hspt.dao.jpa.RoleDAO;
-import org.hspt.dao.jpa.RoleMenuDAO;
-import org.hspt.dao.jpa.RolePermissionDAO;
-import org.hspt.dao.jpa.UserRoleDAO;
-import org.hspt.entity.dto.RoleMenuDTO;
-import org.hspt.entity.dto.RolePermissionDTO;
-import org.hspt.entity.dto.RoleUserDTO;
 import org.hspt.entity.jpa.*;
 import org.hspt.entity.request.ReqRole;
 import org.hspt.entity.request.ReqRoleMenu;
@@ -41,6 +35,12 @@ public class RoleServiceImpl extends BaseService implements RoleService {
 
     @Autowired
     private RoleDAO roleDAO;
+
+    @Autowired
+    private MenuDAO menuDAO;
+
+    @Autowired
+    private PermissionsDAO permissionsDAO;
 
     @Autowired
     private RoleMenuDAO roleMenuDAO;
@@ -79,20 +79,31 @@ public class RoleServiceImpl extends BaseService implements RoleService {
 
     @Override
     public BaseResponse addRoleMenu(ReqRoleMenu roleMenuList) throws BaseException {
+        List<Long> menus = new ArrayList<>();
+        Long pkRole = new Long(0);
+        for (RoleMenuDTO roleMenu : roleMenuList.getRoleMenus()) {
+            pkRole = roleMenu.getPkRole();
+            menus.add(roleMenu.getPkMenu());
+        }
+        addRoleMenus(pkRole, menus);
+        return new BaseResponse(StatusCode.AUTH_SUCCESS);
+    }
+
+    private void addRoleMenus(Long pkRole, List<Long> roleMenuList) throws BaseException {
         QHsptMenu qHsptMenu = QHsptMenu.hsptMenu;
         QHsptRoleMenu qHsptRoleMenu = QHsptRoleMenu.hsptRoleMenu;
-        for (RoleMenuDTO roleMenu : roleMenuList.getRoleMenus()) {
+        for (Long pkMenu : roleMenuList) {
             List<HsptRoleMenu> rm = getQueryFactory().selectFrom(qHsptRoleMenu).where(
                     qHsptRoleMenu.dr.eq(BaseConstants.DATA_STATUS_OK)
-                            .and(qHsptRoleMenu.pkMenu.eq(roleMenu.getPkMenu()))
-                            .and(qHsptRoleMenu.pkRole.eq(roleMenu.getPkRole()))
+                            .and(qHsptRoleMenu.pkMenu.eq(pkMenu))
+                            .and(qHsptRoleMenu.pkRole.eq(pkRole))
             ).fetch();
             if (null == rm || 0 == rm.size()) {
                 List<HsptMenu> menus = getQueryFactory().selectFrom(qHsptMenu).where(
                         qHsptMenu.dr.eq(BaseConstants.DATA_STATUS_OK)
                                 .and(qHsptMenu.menuCode.startsWith(
                                         JPAExpressions.select(qHsptMenu.menuCode).from(qHsptMenu).where(
-                                                qHsptMenu.pkMenu.eq(roleMenu.getPkMenu())
+                                                qHsptMenu.pkMenu.eq(pkMenu)
                                         )
                                 ))
                 ).fetch();
@@ -100,60 +111,163 @@ public class RoleServiceImpl extends BaseService implements RoleService {
                 for (HsptMenu menu : menus) {
                     HsptRoleMenu impRoleMenu = new HsptRoleMenu();
                     impRoleMenu.setPkMenu(menu.getPkMenu());
-                    impRoleMenu.setPkRole(roleMenu.getPkRole());
+                    impRoleMenu.setPkRole(pkRole);
+                    impRoleMenu.setDr(BaseConstants.DATA_STATUS_OK);
                     roleMenus.add(impRoleMenu);
                 }
                 if (0 < roleMenus.size()) {
                     roleMenuDAO.save(roleMenus);
                 }
                 //刷新角色的缓存信息
-                authUtils.reloadByPkRole(roleMenu.getPkRole());
+                authUtils.reloadByPkRole(pkRole);
             }
         }
-        return new BaseResponse(StatusCode.AUTH_SUCCESS);
+    }
+
+    private void addRolePermissions(Long pkRole, List<Long> rolePermissionList) throws BaseException {
+        QHsptPermissions qHsptPermission = QHsptPermissions.hsptPermissions;
+        QHsptRolePermission qHsptRolePermission = QHsptRolePermission.hsptRolePermission;
+        for (Long pkPermission : rolePermissionList) {
+            List<HsptRolePermission> rp = getQueryFactory().selectFrom(qHsptRolePermission).where(
+                    qHsptRolePermission.dr.eq(BaseConstants.DATA_STATUS_OK)
+                            .and(qHsptRolePermission.pkPermission.eq(pkPermission))
+                            .and(qHsptRolePermission.pkRole.eq(pkRole))
+            ).fetch();
+            if (null == rp || 0 == rp.size()) {
+                List<HsptPermissions> permissions = getQueryFactory().selectFrom(qHsptPermission)
+                        .where(qHsptPermission.dr.eq(BaseConstants.DATA_STATUS_OK))
+                        .fetch();
+                List<HsptRolePermission> rolePermissions = new ArrayList<>();
+                for (HsptPermissions permission : permissions) {
+                    HsptRolePermission impRolePermission = new HsptRolePermission();
+                    impRolePermission.setPkPermission(permission.getPkPermissions());
+                    impRolePermission.setDr(BaseConstants.DATA_STATUS_OK);
+                    impRolePermission.setPkRole(pkRole);
+                    rolePermissions.add(impRolePermission);
+                }
+                if (0 < rolePermissions.size()) {
+                    rolePermissionDAO.save(rolePermissions);
+                }
+                //刷新角色的缓存信息
+                authUtils.reloadByPkRole(pkRole);
+            }
+        }
     }
 
     @Override
-    public BaseResponse setRolePermission(ReqRolePermission rolePermissionList) throws BaseException {
+    public BaseResponse createRolePermission(ReqRolePermission rolePermissions) throws BaseException {
+        //1. sanity check
+        //2. create role
+        //3. create role-permission
+        //4. create role-menu
+        if (null != roleDAO.findByRoleNameAndDr(rolePermissions.getRoleName(), BaseConstants.DATA_STATUS_OK)
+            || (null != roleDAO.findByRoleCodeAndDr(rolePermissions.getRoleCode(), BaseConstants.DATA_STATUS_OK)))
+            throw new BaseException(StatusCode.ADD_ERROR_EXISTS);
+
+        HsptRole impRole = new HsptRole();
+        BeanUtils.copyProperties(rolePermissions, impRole);
+        impRole.setRoleType(0);
+        impRole.setPkGroup(new Long(-1));
+        impRole = roleDAO.save(impRole);
+
+        Long pkRole = impRole.getPkRole();
+        List<Long> pkPermissions = new ArrayList<>();
+        List<HsptPermissions> permissions = permissionsDAO.findByDr(BaseConstants.DATA_STATUS_OK);
+        for ( HsptPermissions perm : permissions) {
+            pkPermissions.add(perm.getPkPermissions());
+        }
+        addRolePermissions(pkRole, pkPermissions);
+
+        List<Long> pkMenus = new ArrayList<>();
+        QHsptMenu qHsptMenu = QHsptMenu.hsptMenu;
+        //List<HsptMenu> menus = menuDAO.findByDr(BaseConstants.DATA_STATUS_OK);
+        List<HsptMenu> menus = getQueryFactory().select(qHsptMenu)
+                .from(qHsptMenu)
+                .where(qHsptMenu.dr.eq(BaseConstants.DATA_STATUS_OK))
+                .fetch();
+        for ( HsptMenu m : menus) {
+            pkMenus.add(m.getPkMenu());
+        }
+        addRoleMenus(pkRole, pkMenus);
+
         //set both RolePermission and RoleMenu
         //RolePermission和RoleMenu两个表都是全连接，不要使用add和delete，只使用setDr来表示存在与删除的状态
         //先清除该role的所有权限 和 菜单(setDr=1)，再新加入相应的权限，并加入相应菜单
         //QHsptRolePermission qHsptRolePermission = QHsptRolePermission.hsptRolePermission;
         QHsptRoleMenu qHsptRoleMenu = QHsptRoleMenu.hsptRoleMenu;
         QHsptMenuPermissions qHsptMenuPermissions = QHsptMenuPermissions.hsptMenuPermissions;
+        //Long pkRole = rolePermissions.getPkRole();
 
         //先清除该role的所有权限 和 菜单(setDr=1)
-        for (RolePermissionDTO rolePermission : rolePermissionList.getRolePermissions()) {
-            List<HsptRolePermission> rpList = rolePermissionDAO.findByPkRoleAndDr(rolePermission.getPkRole(), BaseConstants.DATA_STATUS_OK);
-            for (HsptRolePermission rp : rpList) {
-                rp.setDr(BaseConstants.DATA_STATUS_DEL);
-            }
-            List<HsptRoleMenu> rmList = roleMenuDAO.findByPkRoleAndDr(rolePermission.getPkRole(), BaseConstants.DATA_STATUS_OK);
-            for (HsptRoleMenu rm : rmList) {
-                rm.setDr(BaseConstants.DATA_STATUS_DEL);
-            }
-            break;// only loop once
+        List<HsptRolePermission> rpList = rolePermissionDAO.findByPkRoleAndDr(pkRole, BaseConstants.DATA_STATUS_OK);
+        for (HsptRolePermission rp : rpList) {
+            rp.setDr(BaseConstants.DATA_STATUS_DEL);
+        }
+        List<HsptRoleMenu> rmList = roleMenuDAO.findByPkRoleAndDr(pkRole, BaseConstants.DATA_STATUS_OK);
+        for (HsptRoleMenu rm : rmList) {
+            rm.setDr(BaseConstants.DATA_STATUS_DEL);
         }
 
         //再新加入相应的权限，并加入相应菜单
-        for (RolePermissionDTO rolePermission : rolePermissionList.getRolePermissions()) {
-            HsptRolePermission rp = rolePermissionDAO.findByPkPermissionAndPkRoleAndDr(rolePermission.getPkPermission(), rolePermission.getPkRole(), BaseConstants.DATA_STATUS_DEL);
+        for (Long pkPermission : rolePermissions.getPermissions()) {
+            HsptRolePermission rp = rolePermissionDAO.findByPkPermissionAndPkRoleAndDr(pkPermission, pkRole, BaseConstants.DATA_STATUS_DEL);
             rp.setDr(BaseConstants.DATA_STATUS_OK);
-
 
             List<HsptRoleMenu> roleMenus = getQueryFactory().select(qHsptRoleMenu)
                     .from(qHsptRoleMenu, qHsptMenuPermissions)
                     .where(qHsptMenuPermissions.dr.eq(BaseConstants.DATA_STATUS_OK)
                             .and(qHsptRoleMenu.dr.eq(BaseConstants.DATA_STATUS_DEL))
                             .and(qHsptRoleMenu.pkMenu.eq(qHsptMenuPermissions.pkMenu))
-                            .and(qHsptMenuPermissions.pkPermissions.eq(rolePermission.getPkPermission()))
+                            .and(qHsptMenuPermissions.pkPermissions.eq(pkPermission))
                     )
                     .fetch();
             for(HsptRoleMenu rm : roleMenus) {
                 rm.setDr(BaseConstants.DATA_STATUS_OK);
             }
             //刷新角色的缓存信息
-            authUtils.reloadByPkRole(rolePermission.getPkRole());
+            authUtils.reloadByPkRole(pkRole);
+        }
+        return new BaseResponse(StatusCode.AUTH_SUCCESS);
+    }
+
+    @Override
+    public BaseResponse setRolePermission(long pkRole, ReqRolePermission rolePermissions) throws BaseException {
+        //set both RolePermission and RoleMenu
+        //RolePermission和RoleMenu两个表都是全连接，不要使用add和delete，只使用setDr来表示存在与删除的状态
+        //先清除该role的所有权限 和 菜单(setDr=1)，再新加入相应的权限，并加入相应菜单
+        //QHsptRolePermission qHsptRolePermission = QHsptRolePermission.hsptRolePermission;
+        QHsptRoleMenu qHsptRoleMenu = QHsptRoleMenu.hsptRoleMenu;
+        QHsptMenuPermissions qHsptMenuPermissions = QHsptMenuPermissions.hsptMenuPermissions;
+        //Long pkRole = rolePermissions.getPkRole();
+
+        //先清除该role的所有权限 和 菜单(setDr=1)
+        List<HsptRolePermission> rpList = rolePermissionDAO.findByPkRoleAndDr(pkRole, BaseConstants.DATA_STATUS_OK);
+        for (HsptRolePermission rp : rpList) {
+            rp.setDr(BaseConstants.DATA_STATUS_DEL);
+        }
+        List<HsptRoleMenu> rmList = roleMenuDAO.findByPkRoleAndDr(pkRole, BaseConstants.DATA_STATUS_OK);
+        for (HsptRoleMenu rm : rmList) {
+            rm.setDr(BaseConstants.DATA_STATUS_DEL);
+        }
+
+        //再新加入相应的权限，并加入相应菜单
+        for (Long pkPermission : rolePermissions.getPermissions()) {
+            HsptRolePermission rp = rolePermissionDAO.findByPkPermissionAndPkRoleAndDr(pkPermission, pkRole, BaseConstants.DATA_STATUS_DEL);
+            rp.setDr(BaseConstants.DATA_STATUS_OK);
+
+            List<HsptRoleMenu> roleMenus = getQueryFactory().select(qHsptRoleMenu)
+                    .from(qHsptRoleMenu, qHsptMenuPermissions)
+                    .where(qHsptMenuPermissions.dr.eq(BaseConstants.DATA_STATUS_OK)
+                            .and(qHsptRoleMenu.dr.eq(BaseConstants.DATA_STATUS_DEL))
+                            .and(qHsptRoleMenu.pkMenu.eq(qHsptMenuPermissions.pkMenu))
+                            .and(qHsptMenuPermissions.pkPermissions.eq(pkPermission))
+                    )
+                    .fetch();
+            for(HsptRoleMenu rm : roleMenus) {
+                rm.setDr(BaseConstants.DATA_STATUS_OK);
+            }
+            //刷新角色的缓存信息
+            authUtils.reloadByPkRole(pkRole);
         }
         return new BaseResponse(StatusCode.AUTH_SUCCESS);
     }
@@ -216,6 +330,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         QHsptRoleMenu qHsptRoleMenu = QHsptRoleMenu.hsptRoleMenu;
         QHsptPermissions qHsptPermissions = QHsptPermissions.hsptPermissions;
         QHsptMenuPermissions qHsptMenuPermissions = QHsptMenuPermissions.hsptMenuPermissions;
+        QHsptRolePermission qHsptRolePermission = QHsptRolePermission.hsptRolePermission;
         QHsptUserRole userRole = QHsptUserRole.hsptUserRole;
         List<ResRoleMenus> rms = new ArrayList<>();
 
@@ -239,11 +354,19 @@ public class RoleServiceImpl extends BaseService implements RoleService {
                     mp.setIsEnd(menu.getIsEnd());
                     mp.setPkMenu(menu.getPkMenu());
                     mp.setPkFMenu(menu.getPkFMenu());
-                    List<HsptPermissions> permissions = getQueryFactory().
-                                                        select(qHsptPermissions)
-                                                        .from(qHsptPermissions, qHsptMenuPermissions)
+                    List<PermissionDTO> permissions = getQueryFactory().
+                                                        select(Projections.bean(
+                                                                PermissionDTO.class,
+                                                                qHsptPermissions.pkPermissions,
+                                                                qHsptPermissions.permissionsCode,
+                                                                qHsptPermissions.permissionsName,
+                                                                qHsptRolePermission.dr
+                                                        ))
+                                                        .from(qHsptPermissions, qHsptMenuPermissions, qHsptRolePermission)
                                                         .where(qHsptMenuPermissions.pkMenu.eq(menu.getPkMenu())
-                                                                .and(qHsptMenuPermissions.pkPermissions.eq(qHsptPermissions.pkPermissions)))
+                                                                .and(qHsptMenuPermissions.pkPermissions.eq(qHsptPermissions.pkPermissions))
+                                                                .and(qHsptRolePermission.pkPermission.eq(qHsptPermissions.pkPermissions))
+                                                                .and(qHsptRolePermission.pkRole.eq(role.getPkRole())))
                                                         .fetch();
                     mp.setPermissions(permissions);
                     mps.add(mp);
@@ -255,6 +378,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
             ).fetchOne();
             rm.setNumUsers(count);
             rm.setRoleCode(role.getRoleCode());
+            rm.setRoleInfo(role.getRoleInfo());
             rm.setRoleName(role.getRoleName());
             rm.setPkRole(role.getPkRole());
             rm.setMenuPermissions(mps);
