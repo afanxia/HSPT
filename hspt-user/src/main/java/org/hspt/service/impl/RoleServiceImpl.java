@@ -325,7 +325,12 @@ public class RoleServiceImpl extends BaseService implements RoleService {
 
     @Override
     public BaseResponse getRoleInfos() throws BaseException {
-        List<HsptRole> roles = roleDAO.findByDr(BaseConstants.DATA_STATUS_OK);
+        //List<HsptRole> roles = roleDAO.findByDr(BaseConstants.DATA_STATUS_OK);
+        QHsptRole qHsptRole = QHsptRole.hsptRole;
+        List<HsptRole> roles = getQueryFactory().
+                    select(qHsptRole).from(qHsptRole)
+                    .where(qHsptRole.dr.eq(BaseConstants.DATA_STATUS_OK))
+                    .fetch();
         QHsptMenu qHsptMenu = QHsptMenu.hsptMenu;
         QHsptRoleMenu qHsptRoleMenu = QHsptRoleMenu.hsptRoleMenu;
         QHsptPermissions qHsptPermissions = QHsptPermissions.hsptPermissions;
