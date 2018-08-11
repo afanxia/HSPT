@@ -27,6 +27,7 @@
 		<module>hspt-zipkin</module>
         <module>hspt-gateway</module>
         <module>hspt-user</module>
+        <module>hspt-survey</module>
     </modules>
 
 

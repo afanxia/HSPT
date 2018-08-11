@@ -1008,3 +1008,31 @@ CREATE TABLE `hspt_user_role` (
 INSERT INTO `hspt_user_role` VALUES ('2017-11-07 14:02:29', '0', '2017-11-09 14:15:58', '377457784972640256', '2017-11-07 14:02:29', '377457784972640256', '377457785538871296', '377385783062953984', '377457784972640256');
 INSERT INTO `hspt_user_role` VALUES ('2017-11-09 14:00:33', '0', '2017-11-09 14:00:33', '377457784972640256', '2017-11-09 14:00:33', '377457784972640256', '378182074638532608', '377385783532716032', '378182074307182592');
 INSERT INTO `hspt_user_role` VALUES ('2017-11-09 14:22:23', '0', '2017-11-09 14:22:23', '378182074307182592', '2017-11-09 14:22:23', '378182074307182592', '378187570523144192', '377385783532716032', '378187570242125824');
+
+CREATE TABLE `surveyType` (
+  `typeId` int(11) NOT NULL,
+  `typeName` varchar(20) NOT NULL,
+  PRIMARY KEY (`typeId`)
+);
+
+CREATE TABLE `survey` (
+  `surveyId` int(11) NOT NULL,
+  `surveyName` varchar(20) NOT NULL,
+  `author` varchar(20) DEFAULT  NULL,
+  `num` int(5) DEFAULT 0,
+  `bday` int(5) NOT NULL,
+  `currentNum` int(5) DEFAULT 0,
+  `department` varchar(20) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `putdate` datetime DEFAULT NULL,
+  `typeId` int(11) DEFAULT NULL,
+  `frequency` int(2) DEFAULT 0,
+  `times` int(2) DEFAULT 0,
+  `sendOnRegister` BOOLEAN NOT NULL,
+  PRIMARY KEY (`surveyId`),
+  CONSTRAINT  FOREIGN KEY (`typeId`) REFERENCES `surveyType` (`typeId`) ON DELETE SET NULL
+) ;
+INSERT INTO survey VALUES(1,'survey1','admin',10,30, 2,'a1','aaa','2017-06-25 00:00:00',1,2,1,TRUE);
+INSERT INTO survey VALUES(2,'survey2','doctor2',10,30, 2,'a2','baa','2017-06-25 00:00:00',1,3,99,FALSE);
+INSERT INTO surveyType VALUES(1,'第一类');
+INSERT INTO surveyType VALUES(2,'2nd');

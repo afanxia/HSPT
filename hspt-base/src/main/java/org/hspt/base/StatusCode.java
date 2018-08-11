@@ -69,6 +69,8 @@ public enum StatusCode {
     MENU_OEDER_CODE_LENGTH_ERROR(614, "菜单内部编码错误，菜单内部编码应为三位一级"),
     DATA_QUOTE(615, "数据被引用，无法执行操作"),
     DATA_NOT_FOUND(616, "数据不存在"),
+    SURVEY_TYPE_NOT_FOUND(617, "问卷类型不存在"),
+    SURVEY_NOT_FOUND(618, "问卷不存在"),
 
     ADD_SUCCESS(201, "添加成功"),
     ADD_ERROR(101, "添加失败"),

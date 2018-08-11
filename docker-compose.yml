@@ -24,3 +24,7 @@ services:
     image: Hspt/user
     ports:
       - "8090:8090"
+  user:
+    image: Hspt/user
+    ports:
+      - "8091:8091"
