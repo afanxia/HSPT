@@ -16,18 +16,18 @@ public class HsptSurveyType {
 
     @Id
     @Column(name = "typeId")
-    private Integer pkSurveyType; //问卷类型编号
+    private long pkSurveyType; //问卷类型编号
 
     @Basic
     @Column(name = "typeName")
     private String surveyTypeName;    //问卷类型名称
 
 
-    public Integer getPkSurveyType() {
+    public long getPkSurveyType() {
         return pkSurveyType;
     }
 
-    public void setPkSurveyType(Integer pkSurveyType) {
+    public void setPkSurveyType(long pkSurveyType) {
         this.pkSurveyType = pkSurveyType;
     }
 

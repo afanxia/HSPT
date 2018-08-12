@@ -42,13 +42,13 @@ public class SurveyTypeController {
 
     @ApiOperation(value = "删除问卷类型", notes = "删除问卷类型统管理员默认可以访问")
     @RequestMapping(value = "/{surveyTypeId}", method = RequestMethod.DELETE)
-    public BaseResponse delSysSurveyType(@PathVariable("surveyTypeId") Integer surveyTypeId) throws BaseException {
+    public BaseResponse delSysSurveyType(@PathVariable("surveyTypeId") long surveyTypeId) throws BaseException {
         return surveyTypeService.delSurveyType(surveyTypeId);
     }
 
     @ApiOperation(value = "修改问卷类型", notes = "修改问卷类型，系统管理员默认可以访问")
     @RequestMapping(value = "/{surveyTypeId}", method = RequestMethod.PUT)
-    public BaseResponse setSysSurveyType(@PathVariable("surveyTypeId") Integer surveyTypeId, @RequestBody @Validated ReqSurveyType surveyType) throws BaseException {
+    public BaseResponse setSysSurveyType(@PathVariable("surveyTypeId") long surveyTypeId, @RequestBody @Validated ReqSurveyType surveyType) throws BaseException {
         return surveyTypeService.updateSurveyType(surveyType);
     }
 

@@ -21,11 +21,11 @@ public class ResSurvey implements Serializable {
 
     @ApiModelProperty("问卷编号")
     @NotNull
-    private Integer pkSurvey;    //问卷编号
+    private long pkSurvey;    //问卷编号
 
     @ApiModelProperty("问卷类型")
     @NotNull
-    private Integer pkSurveyType;    //问卷类型
+    private long pkSurveyType;    //问卷类型
 
     @NotBlank
     @ApiModelProperty("问卷名称")
@@ -39,9 +39,8 @@ public class ResSurvey implements Serializable {
 
     @ApiModelProperty("随访频率")
     @NotNull
-    private Integer frequency;    //随访频率
+    private long frequency;    //随访频率
 
-    @NotBlank
     @ApiModelProperty("是否注册时发送")
     private boolean sendOnRegister;
 }

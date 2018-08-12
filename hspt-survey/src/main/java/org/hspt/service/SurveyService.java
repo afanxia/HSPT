@@ -36,7 +36,7 @@ public interface SurveyService {
      * @param surveyId
      * @return
      */
-    BaseResponse delSurvey(Integer surveyId) throws BaseException;
+    BaseResponse delSurvey(long surveyId) throws BaseException;
 
 
     /**

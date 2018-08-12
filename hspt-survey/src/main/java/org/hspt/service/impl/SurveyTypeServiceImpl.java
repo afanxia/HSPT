@@ -79,9 +79,10 @@ public class SurveyTypeServiceImpl extends BaseService implements SurveyTypeServ
     }
 
     @Override
-    public BaseResponse delSurveyType(Integer surveyTypeId) throws BaseException {
-        QHsptSurveyType qHsptSurveyType = QHsptSurveyType.hsptSurveyType;
-        HsptSurveyType surveyType = surveyTypeDAO.findOne(qHsptSurveyType.pkSurveyType.eq(surveyTypeId));
+    public BaseResponse delSurveyType(long surveyTypeId) throws BaseException {
+        //QHsptSurveyType qHsptSurveyType = QHsptSurveyType.hsptSurveyType;
+        //HsptSurveyType surveyType = surveyTypeDAO.findOne(qHsptSurveyType.pkSurveyType.eq(surveyTypeId));
+        HsptSurveyType surveyType = surveyTypeDAO.findByPkSurveyType(surveyTypeId);
         if (null != surveyType) {
             surveyTypeDAO.delete((long) surveyType.getPkSurveyType());
         }

@@ -36,5 +36,5 @@ public interface SurveyTypeDAO extends BaseJpaDAO<HsptSurveyType>, QuerydslBinde
      * @param pkSurveyType
      * @return
      */
-    HsptSurveyType findByPkSurveyType(int pkSurveyType);
+    HsptSurveyType findByPkSurveyType(long pkSurveyType);
 }

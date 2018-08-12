@@ -21,7 +21,7 @@ public class ResSurveyType implements Serializable {
 
     @ApiModelProperty("问卷类型编号")
     @NotNull
-    private Integer pkSurveyType;
+    private long pkSurveyType;
 
     @NotBlank
     @ApiModelProperty("问卷类型名称")

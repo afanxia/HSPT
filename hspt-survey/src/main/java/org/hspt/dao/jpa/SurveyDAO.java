@@ -24,7 +24,7 @@ public interface SurveyDAO extends BaseJpaDAO<HsptSurvey>, QuerydslBinderCustomi
      * @param pkSurvey
      * @return
      */
-    HsptSurvey findByPkSurvey(int pkSurvey);
+    HsptSurvey findByPkSurvey(long pkSurvey);
 
     /**
      * 增加对查询条件的模糊搜索支持
