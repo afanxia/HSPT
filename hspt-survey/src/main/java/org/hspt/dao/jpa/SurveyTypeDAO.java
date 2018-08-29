@@ -16,7 +16,7 @@ import org.hspt.base.BaseJpaDAO;
  * </p>
  */
 @Repository
-@CacheConfig(cacheNames = "duties")
+@CacheConfig(cacheNames = "surveyType")
 public interface SurveyTypeDAO extends BaseJpaDAO<HsptSurveyType>, QuerydslBinderCustomizer<QHsptSurveyType> {
 
     /**
