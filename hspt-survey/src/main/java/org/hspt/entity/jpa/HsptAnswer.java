@@ -25,7 +25,7 @@ public class HsptAnswer {
 
     @Basic
     @Column(name = "modifiedDate")
-    private String modifiedDate;//最后修改日期
+    private Date modifiedDate;//最后修改日期
 
     @ManyToOne
     @Column(name = "surveyId")
@@ -119,11 +119,11 @@ public class HsptAnswer {
         this.textChoice = textChoice;
     }
 
-    public String getModifiedDate() {
+    public Date getModifiedDate() {
         return modifiedDate;
     }
 
-    public void setModifiedDate(String modifiedDate) {
+    public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 

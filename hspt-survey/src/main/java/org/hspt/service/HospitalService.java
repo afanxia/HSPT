@@ -35,7 +35,7 @@ public interface HospitalService {
      * @param hospitalId
      * @return
      */
-    BaseResponse delHospital(long hospitalId) throws BaseException;
+    BaseResponse delHospital(Integer hospitalId) throws BaseException;
 
 
     /**

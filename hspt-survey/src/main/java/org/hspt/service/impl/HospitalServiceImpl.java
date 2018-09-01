@@ -51,7 +51,7 @@ public class HospitalServiceImpl extends BaseService implements HospitalService 
     @Override
     public BaseResponse getHospitalCount(Predicate predicate) throws BaseException {
         QHsptHospital qHsptHospital = QHsptHospital.hsptHospital;
-        long count;
+        Long count;
         count = getQueryFactory().
                 select(qHsptHospital.hospitalId.count())
                 .from(qHsptHospital)
@@ -79,7 +79,7 @@ public class HospitalServiceImpl extends BaseService implements HospitalService 
     }
 
     @Override
-    public BaseResponse delHospital(long hospitalId) throws BaseException {
+    public BaseResponse delHospital(Integer hospitalId) throws BaseException {
         //QHsptHospital qHsptHospital = QHsptHospital.hsptHospital;
         //HsptHospital hospital = hospitalDAO.findOne(qHsptHospital.hospitalId.eq(hospitalId));
         HsptHospital hospital = hospitalDAO.findByHospitalId(hospitalId);
@@ -87,7 +87,7 @@ public class HospitalServiceImpl extends BaseService implements HospitalService 
             hospitalDAO.delete((long) hospital.getHospitalId());
         }
         else {
-            return new BaseResponse(StatusCode.SURVEY_TYPE_NOT_FOUND);
+            return new BaseResponse(StatusCode.DATA_NOT_FOUND);
         }
         return new BaseResponse(StatusCode.DELETE_SUCCESS);
     }
@@ -104,7 +104,7 @@ public class HospitalServiceImpl extends BaseService implements HospitalService 
 
             return new BaseResponse(StatusCode.UPDATE_SUCCESS, resHospital);
         }
-        return new BaseResponse(StatusCode.SURVEY_TYPE_NOT_FOUND);
+        return new BaseResponse(StatusCode.DATA_NOT_FOUND);
     }
 
 

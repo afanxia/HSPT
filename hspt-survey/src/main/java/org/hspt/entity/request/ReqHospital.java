@@ -20,7 +20,7 @@ public class ReqHospital extends BaseRequest {
 
     @ApiModelProperty("医院编号")
     @NotNull
-    private long hospitalId;
+    private Integer hospitalId;
 
     @NotBlank
     @ApiModelProperty("医院名称")

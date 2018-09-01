@@ -98,7 +98,7 @@ public class SurveyServiceImpl extends BaseService implements SurveyService {
     }
 
     @Override
-    public BaseResponse delSurvey(long surveyId) throws BaseException {
+    public BaseResponse delSurvey(Long surveyId) throws BaseException {
         //QHsptSurvey qHsptSurvey = QHsptSurvey.hsptSurvey;
         //HsptSurvey survey = surveyDAO.findOne(qHsptSurvey.pkSurvey.eq(surveyId));
         HsptSurvey survey = surveyDAO.findByPkSurvey(surveyId);

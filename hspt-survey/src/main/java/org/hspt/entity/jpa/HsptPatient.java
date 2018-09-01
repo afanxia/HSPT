@@ -83,6 +83,10 @@ public class HsptPatient {
     private Integer state; // 状态， -1为未激活（出现在回收站且不发送问卷），
 
     @Basic
+    @Column(name = "isReceivePicUploadSurvey")
+    private boolean isReceivePicUploadSurvey; // 是否接收病历上传的问卷
+
+    @Basic
     @Column(name = "birthday")
     private Date birthday;
 
@@ -153,6 +157,14 @@ public class HsptPatient {
     public void setBirthday(Date birthday) {
 
         this.birthday = birthday;
+    }
+
+    public boolean getIsReceivePicUploadSurvey() {
+        return isReceivePicUploadSurvey;
+    }
+
+    public void setIsReceivePicUploadSurvey(boolean isReceivePicUploadSurvey) {
+        this.isReceivePicUploadSurvey = isReceivePicUploadSurvey;
     }
 
     public Integer getSex() {

@@ -14,18 +14,18 @@ public class HsptPatientType {
 
     @Id
     @Column(name = "patientTypeId")
-    private long patientTypeId; //问卷类型编号
+    private Integer patientTypeId; //问卷类型编号
 
     @Basic
     @Column(name = "patientTypeName")
     private String patientTypeName;    //问卷类型名称
 
 
-    public long getPatientTypeId() {
+    public Integer getPatientTypeId() {
         return patientTypeId;
     }
 
-    public void setPatientTypeId(long patientTypeId) {
+    public void setPatientTypeId(Integer patientTypeId) {
         this.patientTypeId = patientTypeId;
     }
 

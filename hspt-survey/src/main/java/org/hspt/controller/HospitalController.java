@@ -44,13 +44,13 @@ public class HospitalController {
 
     @ApiOperation(value = "删除医院", notes = "删除医院,系统管理员默认可以访问")
     @RequestMapping(value = "/{hospitalId}", method = RequestMethod.DELETE)
-    public BaseResponse delSysHospital(@PathVariable("hospitalId") long hospitalId) throws BaseException {
+    public BaseResponse delSysHospital(@PathVariable("hospitalId") Integer hospitalId) throws BaseException {
         return hospitalService.delHospital(hospitalId);
     }
 
     @ApiOperation(value = "修改医院", notes = "修改医院，系统管理员默认可以访问")
     @RequestMapping(value = "/{hospitalId}", method = RequestMethod.PUT)
-    public BaseResponse setSysHospital(@PathVariable("hospitalId") long hospitalId, @RequestBody @Validated ReqHospital hospital) throws BaseException {
+    public BaseResponse setSysHospital(@PathVariable("hospitalId") Integer hospitalId, @RequestBody @Validated ReqHospital hospital) throws BaseException {
         return hospitalService.updateHospital(hospital);
     }
 

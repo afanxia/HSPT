@@ -51,7 +51,7 @@ public class SurveyTypeServiceImpl extends BaseService implements SurveyTypeServ
     @Override
     public BaseResponse getSurveyTypeCount(Predicate predicate) throws BaseException {
         QHsptSurveyType qHsptSurveyType = QHsptSurveyType.hsptSurveyType;
-        long count;
+        Long count;
         count = getQueryFactory().
                 select(qHsptSurveyType.pkSurveyType.count())
                 .from(qHsptSurveyType)
@@ -79,7 +79,7 @@ public class SurveyTypeServiceImpl extends BaseService implements SurveyTypeServ
     }
 
     @Override
-    public BaseResponse delSurveyType(long surveyTypeId) throws BaseException {
+    public BaseResponse delSurveyType(Long surveyTypeId) throws BaseException {
         //QHsptSurveyType qHsptSurveyType = QHsptSurveyType.hsptSurveyType;
         //HsptSurveyType surveyType = surveyTypeDAO.findOne(qHsptSurveyType.pkSurveyType.eq(surveyTypeId));
         HsptSurveyType surveyType = surveyTypeDAO.findByPkSurveyType(surveyTypeId);

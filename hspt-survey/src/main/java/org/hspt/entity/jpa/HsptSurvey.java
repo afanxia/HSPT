@@ -18,7 +18,7 @@ public class HsptSurvey {
 
     @Id
     @Column(name = "surveyId")
-    private long pkSurvey;    //问卷编号
+    private Long pkSurvey;    //问卷编号
 
     @ManyToOne
     @JoinColumn(name = "typeId")
@@ -42,11 +42,11 @@ public class HsptSurvey {
 
     @Basic
     @Column(name = "num")
-    private long num;    //总分发数
+    private Long num;    //总分发数
 
     @Basic
     @Column(name = "currentNum")
-    private long currentNum;    //总回收数
+    private Long currentNum;    //总回收数
 
     @Basic
     @Column(name = "description")
@@ -56,11 +56,11 @@ public class HsptSurvey {
 
     @Basic
     @Column(name = "frequency")
-    private long frequency;    //随访频率
+    private Long frequency;    //随访频率
 
     @Basic
     @Column(name = "times")
-    private long times;    //随访次数
+    private Long times;    //随访次数
 
     @Basic
     @Column(name = "sendOnRegister")
@@ -70,15 +70,15 @@ public class HsptSurvey {
 
     @Basic
     @Column(name = "bday")
-    private long bday;  // overdue day
+    private Long bday;  // overdue day
 
 
 
-    public void setBday(long bday) {
+    public void setBday(Long bday) {
         this.bday = bday;
     }
 
-    public long getBday() {
+    public Long getBday() {
         return bday;
     }
 
@@ -90,27 +90,27 @@ public class HsptSurvey {
         return sendOnRegister;
     }
 
-    public long getPkSurvey() {
+    public Long getPkSurvey() {
         return pkSurvey;
     }
 
-    public void setPkSurvey(long pkSurvey) {
+    public void setPkSurvey(Long pkSurvey) {
         this.pkSurvey = pkSurvey;
     }
 
-    public long getTimes() {
+    public Long getTimes() {
         return times;
     }
 
-    public void setTimes(long times) {
+    public void setTimes(Long times) {
         this.times = times;
     }
 
-    public long getFrequency() {
+    public Long getFrequency() {
         return frequency;
     }
 
-    public void setFrequency(long frequency) {
+    public void setFrequency(Long frequency) {
         this.frequency = frequency;
     }
 
@@ -162,19 +162,19 @@ public class HsptSurvey {
         this.putdate = putdate;
     }
 
-    public long getNum() {
+    public Long getNum() {
         return num;
     }
 
-    public void setNum(long num) {
+    public void setNum(Long num) {
         this.num = num;
     }
 
-    public long getCurrentNum() {
+    public Long getCurrentNum() {
         return currentNum;
     }
 
-    public void setCurrentNum(long currentNum) {
+    public void setCurrentNum(Long currentNum) {
         this.currentNum = currentNum;
     }
 
@@ -197,7 +197,7 @@ public class HsptSurvey {
 
     //public void Survey(SurveyType surveyType, String surveyName, String author,
     //              String department, Date putdate, String description,
-    //              Doctor doctor, long frequency, long times, boolean sendOnRegister, long bday) {
+    //              Doctor doctor, Long frequency, Long times, boolean sendOnRegister, Long bday) {
     //    super();
     //    this.surveyType = surveyType;
     //    this.surveyName = surveyName;

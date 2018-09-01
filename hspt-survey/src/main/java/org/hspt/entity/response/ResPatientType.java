@@ -9,25 +9,21 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * <b> 医院 </b>
+ * <b> 病人类型基础信息 </b>
  * <p>
  * 功能描述:
  * </p>
  *
  */
 @Data
-@ApiModel("医院响应实体信息")
-public class ResHospital implements Serializable {
+@ApiModel("病人类型响应实体信息")
+public class ResPatientType implements Serializable {
 
-    @ApiModelProperty("医院编号")
+    @ApiModelProperty("病人类型编号")
     @NotNull
-    private Integer hospitalId;
+    private Integer patientTypeId;    //病人类型编号
 
     @NotBlank
-    @ApiModelProperty("医院名称")
-    private String name;
-
-    public ResHospital() {
-        super();
-    }
+    @ApiModelProperty("病人类型名称")
+    private String patientTypeName;    //病人类型名称
 }

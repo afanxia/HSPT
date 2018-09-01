@@ -57,13 +57,13 @@ public class SurveyController {
 
     @ApiOperation(value = "删除问卷", notes = "删除问卷，系统管理员默认可以访问")
     @RequestMapping(value = "/{surveyId}", method = RequestMethod.DELETE)
-    public BaseResponse delSurvey(@PathVariable("surveyId") long surveyId) throws BaseException {
+    public BaseResponse delSurvey(@PathVariable("surveyId") Long surveyId) throws BaseException {
         return surveyService.delSurvey(surveyId);
     }
 
     @ApiOperation(value = "修改问卷", notes = "修改问卷，系统管理员默认可以访问")
     @RequestMapping(value = "/{surveyId}", method = RequestMethod.PUT)
-    public BaseResponse updateSurvey(@PathVariable("surveyId") long surveyId, @RequestBody @Validated ReqSurvey survey) throws BaseException {
+    public BaseResponse updateSurvey(@PathVariable("surveyId") Long surveyId, @RequestBody @Validated ReqSurvey survey) throws BaseException {
         return surveyService.updateSurvey(survey);
     }
 
