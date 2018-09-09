@@ -43,11 +43,11 @@ public class HsptPlan {
     @JoinColumn(name = "patientTypeId")
     private HsptPatientType patientType;
 
-    @Basic
-    @Column(name = "aid")
+    @ManyToOne
+    @JoinColumn(name = "aid")
     private HsptUser doctor;    //操作医生
 
-    @OneToMany(mappedBy = "Plan")
+    @OneToMany()
     @OrderBy(value = "surveyId ASC")
     private Set<HsptSurvey> surveys = new HashSet<>();
 

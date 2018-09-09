@@ -26,4 +26,14 @@ public interface AnswerDAO extends BaseJpaDAO<HsptAnswer>, QuerydslBinderCustomi
      * @return
      */
     HsptAnswer findByAnswerId(Integer answerId);
+
+    /**
+     * 增加对查询条件的模糊搜索支持
+     *
+     * @param bindings
+     * @param answer
+     */
+    @Override
+    default void customize(QuerydslBindings bindings, QHsptAnswer answer) {
+    }
 }

@@ -27,4 +27,15 @@ public interface QuestionDAO extends BaseJpaDAO<HsptQuestion>, QuerydslBinderCus
      * @return
      */
     HsptQuestion findByQuestionId(Integer questionId);
+
+    /**
+     * 增加对查询条件的模糊搜索支持
+     *
+     * @param bindings
+     * @param question
+     */
+    @Override
+    default void customize(QuerydslBindings bindings, QHsptQuestion question) {
+        bindings.bind(question.questionContent).first(StringExpression::containsIgnoreCase);
+    }
 }

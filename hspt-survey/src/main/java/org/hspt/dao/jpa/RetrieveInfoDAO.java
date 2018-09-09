@@ -26,4 +26,15 @@ public interface RetrieveInfoDAO extends BaseJpaDAO<HsptRetrieveInfo>, QuerydslB
      * @return
      */
     HsptRetrieveInfo findByDeliveryId(Integer deliveryId);
+
+    /**
+     * 增加对查询条件的模糊搜索支持
+     *
+     * @param bindings
+     * @param retrieveInfo
+     */
+    @Override
+    default void customize(QuerydslBindings bindings, QHsptRetrieveInfo retrieveInfo) {
+        bindings.bind(retrieveInfo.survey.surveyName).first(StringExpression::containsIgnoreCase);
+    }
 }

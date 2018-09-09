@@ -62,16 +62,16 @@ public class HsptPatient {
     @Column(name = "email")
     private String email;    //邮箱
 
-    @Basic
-    @Column(name = "aid")
+    @ManyToOne
+    @JoinColumn(name = "aid")
     private HsptUser doctor;    //操作医生
 
     @Basic
     @Column(name = "sex")
     private Integer sex;      //  male == 1, female == 0; different from sex in Plan
 
-    @Basic
-    @Column(name = "addnDoctorId")
+    @ManyToOne
+    @JoinColumn(name = "addnDoctorId")
     private HsptUser addnDoctor;    //共享医生
 
     @Basic
@@ -94,11 +94,11 @@ public class HsptPatient {
     @Column(name = "createTime")
     private Date createTime;    //创建时间
 
-    @OneToMany(mappedBy = "Patient", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     @OrderBy(value = "deliveryId ASC")
     private Set<HsptDeliveryInfo> deliveryInfos;    //该病人的随访问卷分发信息
 
-    @OneToMany(mappedBy = "Patient", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     @OrderBy(value = "deliveryId ASC")
     private Set<HsptRetrieveInfo> retrieveInfos;    //该病人的答卷信息
 

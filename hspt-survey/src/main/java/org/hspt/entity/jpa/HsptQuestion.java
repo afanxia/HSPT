@@ -47,7 +47,7 @@ public class HsptQuestion {
     @Column(name = "endAge")
     private Integer endAge;
 
-    @OneToMany(mappedBy = "Question", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     @OrderBy(value = "choiceId ASC")
     private Set<HsptChoice> choices = new HashSet<>();
 

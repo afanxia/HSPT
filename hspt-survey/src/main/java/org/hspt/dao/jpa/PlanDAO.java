@@ -3,6 +3,7 @@ package org.hspt.dao.jpa;
 import com.querydsl.core.types.dsl.StringExpression;
 import org.hspt.base.BaseJpaDAO;
 import org.hspt.entity.jpa.HsptPlan;
+import org.hspt.entity.jpa.QHsptPatient;
 import org.hspt.entity.jpa.QHsptPlan;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -27,4 +28,14 @@ public interface PlanDAO extends BaseJpaDAO<HsptPlan>, QuerydslBinderCustomizer<
      * @return
      */
     HsptPlan findByPlanId(Integer planId);
+
+    /**
+     * 增加对查询条件的模糊搜索支持
+     *
+     * @param bindings
+     * @param plan
+     */
+    @Override
+    default void customize(QuerydslBindings bindings, QHsptPlan plan) {
+    }
 }

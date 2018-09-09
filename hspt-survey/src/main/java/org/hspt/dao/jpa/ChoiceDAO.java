@@ -26,4 +26,14 @@ public interface ChoiceDAO extends BaseJpaDAO<HsptChoice>, QuerydslBinderCustomi
      * @return
      */
     HsptChoice findByChoiceId(Integer choiceId);
+
+    /**
+     * 增加对查询条件的模糊搜索支持
+     *
+     * @param bindings
+     * @param choice
+     */
+    @Override
+    default void customize(QuerydslBindings bindings, QHsptChoice choice) {
+    }
 }

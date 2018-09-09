@@ -28,11 +28,11 @@ public class HsptAnswer {
     private Date modifiedDate;//最后修改日期
 
     @ManyToOne
-    @Column(name = "surveyId")
+    @JoinColumn(name = "surveyId")
     private HsptSurvey survey;    //分发问卷
 
     @ManyToOne
-    @Column(name = "patientId")
+    @JoinColumn(name = "patientId")
     private HsptPatient patient;    //分发病人
 
     @Basic
@@ -44,8 +44,8 @@ public class HsptAnswer {
     private Integer textChoice;
 
     @ManyToOne
-    @Column(name = "deliveryId")
-    private HsptRetrieveInfo retrieveInfo;
+    @JoinColumn(name = "deliveryId")
+    private HsptDeliveryInfo deliveryInfo;
 
     @ManyToOne
     @JoinColumn(name = "questionId")
@@ -87,12 +87,12 @@ public class HsptAnswer {
         this.patient = patient;
     }
 
-    public HsptRetrieveInfo getRetrieveInfo() {
-        return retrieveInfo;
+    public HsptDeliveryInfo getDeliveryInfo() {
+        return deliveryInfo;
     }
 
-    public void setRetrieveInfo(HsptRetrieveInfo retrieveInfo) {
-        this.retrieveInfo = retrieveInfo;
+    public void setDeliveryInfo(HsptDeliveryInfo deliveryInfo) {
+        this.deliveryInfo = deliveryInfo;
     }
 
     public Integer getAnswerId() {

@@ -1,8 +1,12 @@
 package org.hspt.entity.jpa;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -13,11 +17,14 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "RetrieveInfo", schema = "hspt", catalog = "")
-public class HsptRetrieveInfo {
+public class HsptRetrieveInfo implements Serializable {
 
     @Id
+    @Column(name = "deliveryId")
+    private Integer deliveryId;
+
     @OneToOne
-    @JoinColumn(name = "deliveryId")
+    @PrimaryKeyJoinColumn
     private HsptDeliveryInfo deliveryInfo;
 
     @Basic
@@ -32,13 +39,18 @@ public class HsptRetrieveInfo {
     @JoinColumn(name = "patientId")
     private HsptPatient patient;    //分发病人
 
-    @OneToMany(mappedBy = "RetrieveInfo", cascade = CascadeType.ALL)
-    @OrderBy(value = "answerId ASC")
-    private Set<HsptAnswer> answers = new HashSet<>();
 
     @Basic
     @Column(name = "byDoctor")
     private String byDoctor; //由该医生添加
+
+	public int getDeliveryId() {
+		return deliveryId;
+	}
+
+	public void setDeliveryId(int deliveryId) {
+		this.deliveryId = deliveryId;
+	}
 
     public String getByDoctor() {
         return byDoctor;
@@ -46,14 +58,6 @@ public class HsptRetrieveInfo {
 
     public void setByDoctor(String byDoctor) {
         this.byDoctor = byDoctor;
-    }
-
-    public Set<HsptAnswer> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(Set<HsptAnswer> answers) {
-        this.answers = answers;
     }
 
     public HsptSurvey getSurvey() {
@@ -90,5 +94,25 @@ public class HsptRetrieveInfo {
 
     public HsptRetrieveInfo() {
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HsptRetrieveInfo that = (HsptRetrieveInfo) o;
+        return Objects.equals(deliveryInfo, that.deliveryInfo) &&
+                Objects.equals(retrieveDate, that.retrieveDate) &&
+                Objects.equals(survey, that.survey) &&
+                Objects.equals(patient, that.patient);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(deliveryInfo, retrieveDate, survey, patient);
+    }
+
+    private static final long serialVersionUID = 1L;
+
 
 }

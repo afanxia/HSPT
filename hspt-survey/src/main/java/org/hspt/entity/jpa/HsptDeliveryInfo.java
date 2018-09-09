@@ -2,6 +2,8 @@ package org.hspt.entity.jpa;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <b>  </b>
@@ -42,8 +44,12 @@ public class HsptDeliveryInfo {
     private Integer state; //状态 (已简化为： 未答卷=0,重发未答卷>0[次数])
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "deliveryInfo")
+    @PrimaryKeyJoinColumn
     private HsptRetrieveInfo retrieveInfo;
 
+    @OneToMany(mappedBy = "deliveryInfo", cascade = CascadeType.ALL)
+    @OrderBy(value = "answerId ASC")
+    private Set<HsptAnswer> answers = new HashSet<>();
 
     public HsptRetrieveInfo getRetrieveInfo() {
         return retrieveInfo;
@@ -61,6 +67,14 @@ public class HsptDeliveryInfo {
         this.overday = overday;
     }
 
+
+    public Set<HsptAnswer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Set<HsptAnswer> answers) {
+        this.answers = answers;
+    }
 
     public Integer getDeliveryId() {
         return deliveryId;

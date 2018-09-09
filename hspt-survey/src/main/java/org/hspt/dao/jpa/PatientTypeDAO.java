@@ -3,6 +3,7 @@ package org.hspt.dao.jpa;
 import com.querydsl.core.types.dsl.StringExpression;
 import org.hspt.base.BaseJpaDAO;
 import org.hspt.entity.jpa.HsptPatientType;
+import org.hspt.entity.jpa.QHsptPatient;
 import org.hspt.entity.jpa.QHsptPatientType;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -26,4 +27,15 @@ public interface PatientTypeDAO extends BaseJpaDAO<HsptPatientType>, QuerydslBin
      * @return
      */
     HsptPatientType findByPatientTypeId(Integer patientTypeId);
+
+    /**
+     * 增加对查询条件的模糊搜索支持
+     *
+     * @param bindings
+     * @param patientType
+     */
+    @Override
+    default void customize(QuerydslBindings bindings, QHsptPatientType patientType) {
+        bindings.bind(patientType.patientTypeName).first(StringExpression::containsIgnoreCase);
+    }
 }
