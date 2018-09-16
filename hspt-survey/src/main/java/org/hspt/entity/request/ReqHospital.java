@@ -26,4 +26,7 @@ public class ReqHospital extends BaseRequest {
     @ApiModelProperty("医院名称")
     private String name;
 
+    @ApiModelProperty("城市编号")
+    @NotNull
+    private Integer cityId;
 }

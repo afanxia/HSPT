@@ -27,6 +27,10 @@ public class ResHospital implements Serializable {
     @ApiModelProperty("医院名称")
     private String name;
 
+    @ApiModelProperty("城市编号")
+    @NotNull
+    private Integer cityId;
+
     public ResHospital() {
         super();
     }

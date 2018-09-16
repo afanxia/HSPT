@@ -67,10 +67,12 @@ public class HospitalServiceImpl extends BaseService implements HospitalService 
                 .select(Projections.bean(
                         ResHospital.class,
                         qHsptHospital.hospitalId,
-                        qHsptHospital.name
+                        qHsptHospital.name,
+                        qHsptHospital.cityId
                 ))
                 .from(qHsptHospital)
-                .where(predicate)
+                .where(qHsptHospital.visible.eq(true)
+                        .and(predicate))
                 .orderBy(qHsptHospital.hospitalId.asc())
                 .fetch();
 
