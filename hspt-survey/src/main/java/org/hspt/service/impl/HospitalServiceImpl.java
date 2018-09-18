@@ -96,7 +96,7 @@ public class HospitalServiceImpl extends BaseService implements HospitalService 
 
     @Override
     public BaseResponse updateHospital(ReqHospital reqHospital) throws BaseException {
-        HsptHospital hospital = hospitalDAO.findOne((long) reqHospital.getHospitalId());
+        HsptHospital hospital = hospitalDAO.findByHospitalId(reqHospital.getHospitalId());
         if (null != hospital) {
             BeanUtils.copyProperties(reqHospital, hospital);
 
